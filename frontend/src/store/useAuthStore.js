@@ -6,6 +6,18 @@ import { io } from "socket.io-client";
 const DEFAULT_SOCKET_URL = import.meta.env.MODE === "development" ? "http://localhost:5001" : "/";
 const BASE_URL = import.meta.env.VITE_SOCKET_URL || DEFAULT_SOCKET_URL;
 
+if (
+  import.meta.env.MODE !== "development" &&
+  !import.meta.env.VITE_SOCKET_URL &&
+  typeof window !== "undefined" &&
+  window.location?.hostname?.includes("vercel.app")
+) {
+  // eslint-disable-next-line no-console
+  console.warn(
+    "[chat-app] Socket URL is using '/'. On Vercel this usually requires setting VITE_SOCKET_URL to your backend origin."
+  );
+}
+
 const normalizeId = (value) => {
   if (!value) return "";
   if (typeof value === "string") return value;
@@ -64,7 +76,16 @@ export const useAuthStore = create((set, get) => ({
       toast.success("Account created successfully");
       get().connectSocket();
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to sign up");
+      const serverMessage = error?.response?.data?.message;
+      if (serverMessage) return toast.error(serverMessage);
+
+      if (!error?.response) {
+        return toast.error(
+          "Cannot reach server. Check deployed API URL (VITE_API_BASE_URL or VITE_BACKEND_URL) and backend CORS/cookies."
+        );
+      }
+
+      toast.error("Failed to sign up");
     } finally {
       set({ isSigningUp: false });
     }
@@ -79,7 +100,16 @@ export const useAuthStore = create((set, get) => ({
 
       get().connectSocket();
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to log in");
+      const serverMessage = error?.response?.data?.message;
+      if (serverMessage) return toast.error(serverMessage);
+
+      if (!error?.response) {
+        return toast.error(
+          "Cannot reach server. Check deployed API URL (VITE_API_BASE_URL or VITE_BACKEND_URL) and backend CORS/cookies."
+        );
+      }
+
+      toast.error("Failed to log in");
     } finally {
       set({ isLoggingIn: false });
     }

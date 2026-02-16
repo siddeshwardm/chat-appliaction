@@ -85,11 +85,20 @@ export const logout = (req, res) => {
   try {
     const isProduction = process.env.NODE_ENV === "production";
 
+    const configuredSameSite = (process.env.COOKIE_SAMESITE || "").toLowerCase();
+    const sameSite = configuredSameSite || (isProduction ? "strict" : "lax");
+
+    const configuredSecure = process.env.COOKIE_SECURE;
+    const secure =
+      typeof configuredSecure === "string"
+        ? configuredSecure.toLowerCase() === "true"
+        : isProduction;
+
     res.cookie("jwt", "", {
       maxAge: 0,
       httpOnly: true,
-      sameSite: isProduction ? "strict" : "lax",
-      secure: isProduction,
+      sameSite,
+      secure: sameSite === "none" ? true : secure,
     });
     res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {

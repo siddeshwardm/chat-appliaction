@@ -104,8 +104,8 @@ MONGODB_URI=...
 JWT_SECRET=...
 JWT_EXPIRES_IN=7d
 
-# allow your deployed frontend to call the API + connect sockets
-CORS_ORIGINS=https://<your-vercel-app>.vercel.app
+# allow your deployed frontend to call the API + connect sockets (comma-separated)
+CORS_ORIGINS=https://<your-vercel-app>.vercel.app,http://localhost:5173
 
 # If frontend + backend are on different domains, cookies must be cross-site
 COOKIE_SAMESITE=none
@@ -134,7 +134,10 @@ In Vercel:
 Set frontend environment variables in Vercel:
 
 ```bash
-# point to your backend (include /api)
+# Option A (recommended): set backend origin (no /api). Frontend appends /api automatically.
+VITE_BACKEND_URL=https://<your-backend-domain>
+
+# Option B: set full API base URL (we will also auto-append /api if you forget)
 VITE_API_BASE_URL=https://<your-backend-domain>/api
 
 # point to your backend origin for sockets (no /api)
