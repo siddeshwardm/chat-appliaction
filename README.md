@@ -120,6 +120,10 @@ CLOUDINARY_API_KEY=...
 CLOUDINARY_API_SECRET=...
 
 NODE_ENV=production
+
+Notes:
+
+- The repo-root `.env` is intended for local development. In production, set env vars on your hosting platform.
 ```
 
 Start command:

@@ -3,6 +3,7 @@ import "./config/env.js";
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import fs from "fs";
 
 import path from "path";
 
@@ -45,11 +46,26 @@ app.get("/api/health", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../frontend/dist")));
+const frontendDistPath = path.join(__dirname, "../frontend/dist");
+const frontendIndexPath = path.join(frontendDistPath, "index.html");
+const shouldServeFrontend =
+  process.env.SERVE_FRONTEND === "true" ||
+  (process.env.NODE_ENV === "production" && fs.existsSync(frontendIndexPath));
+
+if (shouldServeFrontend) {
+  app.use(express.static(frontendDistPath));
 
   app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
+    res.sendFile(frontendIndexPath);
+  });
+} else {
+  // Helpful when deploying backend separately (Render/Railway/Fly)
+  app.get("/", (req, res) => {
+    res.status(200).json({
+      ok: true,
+      service: "chat-app-backend",
+      message: "Backend is running. Use /api/health to verify.",
+    });
   });
 }
 
