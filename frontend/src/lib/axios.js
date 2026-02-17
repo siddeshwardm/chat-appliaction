@@ -38,4 +38,5 @@ if (
 export const axiosInstance = axios.create({
   baseURL: BASE_URL,
   withCredentials: true,
+  timeout: 10000,
 });

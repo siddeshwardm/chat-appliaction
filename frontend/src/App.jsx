@@ -6,7 +6,7 @@ import LoginPage from "./pages/LoginPage";
 import SettingsPage from "./pages/SettingsPage";
 import ProfilePage from "./pages/ProfilePage";
 
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useAuthStore } from "./store/useAuthStore";
 import { useThemeStore } from "./store/useThemeStore";
 import { useEffect } from "react";
@@ -18,20 +18,24 @@ const App = () => {
   const { authUser, checkAuth, isCheckingAuth, onlineUsers } = useAuthStore();
   const { theme } = useThemeStore();
 
-  console.log({ onlineUsers });
+  const location = useLocation();
 
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
 
-  console.log({ authUser });
+  // Don't block rendering of public routes while the backend wakes up (common on free tiers).
+  const publicRoutes = new Set(["/login", "/signup"]);
+  const isPublicRoute = publicRoutes.has(location.pathname);
+  const shouldBlockForAuthCheck = isCheckingAuth && !authUser && !isPublicRoute;
 
-  if (isCheckingAuth && !authUser)
+  if (shouldBlockForAuthCheck) {
     return (
       <div className="flex items-center justify-center h-screen">
         <Loader className="size-10 animate-spin" />
       </div>
     );
+  }
 
   return (
     <div data-theme={theme}>
