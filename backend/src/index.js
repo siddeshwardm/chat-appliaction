@@ -28,6 +28,9 @@ const corsOriginsFromEnv = (process.env.CORS_ORIGINS || "")
   .filter(Boolean);
 const corsOrigins = corsOriginsFromEnv.length > 0 ? corsOriginsFromEnv : defaultCorsOrigins;
 
+console.log("🔧 CORS_ORIGINS env:", process.env.CORS_ORIGINS);
+console.log("🔧 Parsed CORS origins:", corsOrigins);
+
 app.use(
   cors({
     origin: corsOrigins,
