@@ -14,7 +14,7 @@ const HomePage = () => {
           <div className="flex h-full rounded-lg overflow-hidden">
             <Sidebar />
 
-            <div className={selectedUser ? "flex flex-1" : "hidden sm:flex sm:flex-1"}>
+            <div className={selectedUser ? "flex flex-1" : "hidden lg:flex lg:flex-1"}>
               {!selectedUser ? <NoChatSelected /> : <ChatContainer />}
             </div>
           </div>
