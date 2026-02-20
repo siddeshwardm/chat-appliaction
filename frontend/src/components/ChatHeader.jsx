@@ -6,6 +6,20 @@ const ChatHeader = () => {
   const { selectedUser, setSelectedUser } = useChatStore();
   const { onlineUsers } = useAuthStore();
 
+  const handleMobileBack = () => {
+    if (typeof window === "undefined") return setSelectedUser(null);
+
+    const state = window.history?.state;
+    // If we created a history entry for the open chat, go back so the
+    // device/browser back button and UI back button stay in sync.
+    if (state && state.__chatOpen) {
+      window.history.back();
+      return;
+    }
+
+    setSelectedUser(null);
+  };
+
   return (
     <div className="p-2.5 border-b border-base-300">
       <div className="flex items-center justify-between">
@@ -13,7 +27,7 @@ const ChatHeader = () => {
           {/* Back button (mobile/tablet) */}
           <button
             className="btn btn-ghost btn-sm lg:hidden"
-            onClick={() => setSelectedUser(null)}
+            onClick={handleMobileBack}
             type="button"
             aria-label="Back"
           >

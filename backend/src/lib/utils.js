@@ -22,9 +22,11 @@ export const generateToken = (userId, res) => {
     expiresIn,
   });
 
+  const sessionOnly = String(process.env.COOKIE_SESSION_ONLY || "").toLowerCase() === "true";
+
   res.cookie("jwt", token, {
-    maxAge: 7 * 24 * 60 * 60 * 1000, // MS
-    httpOnly: true, // prevent XSS attacks cross-site scripting attacks
+    ...(sessionOnly ? {} : { maxAge: 7 * 24 * 60 * 60 * 1000 }),
+    httpOnly: true,
     // For cross-site cookies (frontend + backend on different domains), set:
     // COOKIE_SAMESITE=none and COOKIE_SECURE=true
     sameSite,
