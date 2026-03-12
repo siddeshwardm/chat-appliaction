@@ -1,5 +1,7 @@
 # ✨ Full Stack Realtime Chat App ✨
 
+The app is live here: https://chat-application-artsy-tech.vercel.app/
+
 
 Highlights:
 
